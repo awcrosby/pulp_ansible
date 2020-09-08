@@ -123,6 +123,7 @@ class CollectionMetadataSerializer(serializers.ModelSerializer):
     A serializer for a CollectionVersion metadata.
     """
 
+    docs_blob_url = serializers.SerializerMethodField()
     tags = relations.ManyRelatedField(relations.StringRelatedField())
 
     class Meta:
@@ -137,7 +138,21 @@ class CollectionMetadataSerializer(serializers.ModelSerializer):
             "issues",
             "license",
             "repository",
+            "docs_blob_url",
             "tags",
+        )
+
+    def get_docs_blob_url(self, obj):
+        """Get url to docs_blob."""
+
+        return reverse(
+            "collection-versions-detail-docs",
+            kwargs={
+                "path": self.context["path"],
+                "namespace": obj.namespace,
+                "name": obj.name,
+                "version": obj.version,
+            },
         )
 
 
